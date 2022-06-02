@@ -4,7 +4,7 @@ const app = express()
 
 //Ejecucion de Midelwares
 app.use(express.urlencoded({extended: true}))
-app.use(express.json())
+app.use(express.json({limit: '70mb'}))
 dotenv.config()
 
 //Configuracion de CORS 
