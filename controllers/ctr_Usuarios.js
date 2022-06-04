@@ -25,8 +25,9 @@ const Controladores = {
                     apellidos: req.body.apellidos,
                     telefono: req.body.telefono,
                     correo: req.body.correo,
-                    password: req.body.password,
-                    estado: false
+                    password: req.body.password,                    
+                    estado: false,
+                    rol: 'User'
                 }        
                 db.collection('Usuarios').findOne({correo: NewUser.correo}, (err, data)=>{
                     if(err || data){
