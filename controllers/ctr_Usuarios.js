@@ -70,15 +70,23 @@ const Controladores = {
     login: (req, res)=>{        
         db.collection('Usuarios').find({$and: [{correo: req.body.correo}, {estado: true}]}).toArray((err, data)=>{
             if(data.length == 1 && !err){
-                //COMPARAMOS LA CONTRASEÑA ENCRIPTADA OCN LA INGREZADA
+                //Verficiar password
                 var PassCompare = bcrypt.compare(req.body.password, data[0].password)
+                //Datos para la session
+                var DataSession = {
+                    "UserID": data[0].idUsuario,
+                    "nombres": data[0].nombres,
+                    "apellidos": data[0].apellidos,
+                    "foto": data[0].foto,
+                    "rol": data[0].rol
+                }
                 if(PassCompare){
-                    res.status(200).json({Estado: true, Mensaje: 'Su cuenta se logueo con exito'})
+                    res.status(200).json({Estado: true, dato: DataSession, Mensaje: 'Su cuenta se logueo con exito'})
                 }else{
-                    res.status(404).json({Estado: false, Mensaje: 'Su contraseña no coincide'})
+                    res.status(404).json({Estado: false, dato: null, Mensaje: 'Su contraseña no coincide'})
                 }
             }else{
-                res.status(404).json({Estado: false, Mensaje: 'Su cuenta no esta habilitada'})
+                res.status(404).json({Estado: false, dato: null, Mensaje: 'Su cuenta no esta habilitada'})
             }
         })
     },
