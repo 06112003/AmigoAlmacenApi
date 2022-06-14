@@ -108,6 +108,16 @@ const Controladores = {
                 res.status(404).json({Estado: false, Mensaje: 'No se pudo editar el usuario'})
             }
         })
+    },
+
+    view: (req, res)=>{
+        db.collection('Usuarios').find().toArray((err, datos)=>{
+            if(datos && !err){                
+                res.status(200).json({Estado: true, data: datos})
+            }else{
+                res.status(404).json({Estado: false, data: null})
+            }
+        })
     }
 
     
