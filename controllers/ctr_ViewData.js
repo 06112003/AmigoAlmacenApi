@@ -39,32 +39,37 @@ const Controladores = {
         }else{
             Orden.producto = 1
         }                    
-        db.collection('Lista_Reportes').aggregate([                                                    
-            
-            //Establecemos la relacion de la coleccion
-            {$lookup: {
-                from: 'Lista_Productos',//Coleccion con la que lo vamos a relacionar
-                localField: 'idRef',//En base a que lo vamos a relaconar
-                foreignField: 'idProducto',//Elemento que tiene que estar relacionado con idRef
-                as: 'dataProducto'//Nombre que se le asigna al conjunto de datos relacionados
-            }},
-            //Se crea un duplicada con los datos fucionados de ambas colleciones
-            {$unwind: '$dataProducto'},
+        db.collection('Lista_Reportes').aggregate([                                                                            
+            {
+                //Establecemos la relacion de la coleccion
+                $lookup: {
+                    from: 'Lista_Productos',//Coleccion con la que lo vamos a relacionar
+                    localField: 'idRef',//En base a que lo vamos a relaconar
+                    foreignField: 'idProducto',//Elemento que tiene que estar relacionado con idRef
+                    as: 'dataProducto'//Nombre que se le asigna al conjunto de datos relacionados
+                }
+            },            
+            {
+                //Se crea un duplicada con los datos fucionados de ambas colleciones
+                $unwind: '$dataProducto'
+            },
             {
                 //Colocamos el find con el que van a aparecer los reportes             
                 $match: {$and: [{nvl: {$regex: Estado}}, {'dataProducto.producto':  {$regex: Busqueda, "$options" : "i"}}]},
-            },
-            //Los datos que al fina va a estar retornando
-            {$project: {
-                idReporte: "$idReporte",
-                producto: "$dataProducto.producto",                            
-                proveedor: "$dataProducto.proveedor",                            
-                imagen: "$imagen",                            
-                nvl: "$nvl",                      
-                perdidas: "$perdidas"                                 
-            }},
-            //El orden con el que van a salir los productos
+            },            
             {
+                //Los datos que al fina va a estar retornando
+                $project: {
+                    idReporte: "$idReporte",
+                    producto: "$dataProducto.producto",                            
+                    proveedor: "$dataProducto.proveedor",                            
+                    imagen: "$imagen",                            
+                    nvl: "$nvl",                      
+                    perdidas: "$perdidas"                                 
+                },
+            },            
+            {
+                //El orden con el que van a salir los productos
                 $sort: Orden
             }                                                                    
             ]).toArray((err, data)=>{

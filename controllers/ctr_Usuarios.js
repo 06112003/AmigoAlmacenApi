@@ -61,10 +61,11 @@ const Controladores = {
                     }
                 })
             }else{
-                
+                res.status(404).json({Estado: false, Mensaje: 'El servidor no pudo procesar su imagen'})
             }
         })        
     },
+
 
 
     login: (req, res)=>{        
@@ -92,6 +93,7 @@ const Controladores = {
     },
 
 
+
     edit: async(req, res)=>{
         var IdDelete = parseInt(req.params.id)
         var DataEdit = req.body
@@ -110,6 +112,8 @@ const Controladores = {
         })
     },
 
+    
+    
     validarEstado: (req, res)=>{
         var idUsuario = parseInt(req.params.id)
         db.collection('Usuarios').findOne({idUsuario: idUsuario}, (err, data)=>{
@@ -122,17 +126,61 @@ const Controladores = {
         })
     }, 
 
-    view: (req, res)=>{
-        db.collection('Usuarios').find().toArray((err, datos)=>{
-            if(datos && !err){                
-                res.status(200).json({Estado: true, data: datos})
-            }else{
-                res.status(404).json({Estado: false, data: null})
-            }
-        })
-    }
 
-    
+
+    view: (req, res)=>{
+        var idUser = parseInt(req.params.id)
+
+        if(idUser == null){
+            db.collection('Usuarios').find().toArray((err, datos)=>{
+                if(datos && !err){                
+                    res.status(200).json({Estado: true, data: datos})
+                }else{
+                    res.status(404).json({Estado: false, data: null})
+                }
+            })
+        }else{
+            db.collection('Usuarios').aggregate([   
+                {
+                    $match: {idUsuario: idUser}
+                },        
+                {
+                    $lookup: {
+                        from: 'Lista_Productos',
+                        localField: 'idUsuario',
+                        foreignField: 'idUsuario',
+                        pipeline: [{$count: "TotalProduct"}],                        
+                        as: 'rstProductos' 
+                    },
+                },                
+                {   
+                    $lookup: {
+                        from: 'Lista_Reportes',
+                        localField: 'idUsuario',
+                        foreignField: 'idUsuario',                        
+                        pipeline: [{$count: "TotalReport"}],
+                        as: 'rstReportes' 
+                    },
+                },
+                {
+                    $project: {
+                        correo: '$correo',
+                        telefono: '$telefono',
+                        nombres: '$nombres',
+                        productos: { $arrayElemAt: [ "$rstProductos.TotalProduct", 0 ]},                         
+                        reportes: { $arrayElemAt: [ "$rstReportes.TotalReport", 0 ]},
+                    }
+                }                
+            ]).toArray((err, dato)=>{                
+                var dataUser = dato[0]
+                if(!dataUser.productos) dataUser.productos = 0 
+                if(!dataUser.reportes) dataUser.reportes = 0 
+
+                res.json({data: dataUser})
+                
+            })
+        }
+    }
 }
 
 module.exports = Controladores
