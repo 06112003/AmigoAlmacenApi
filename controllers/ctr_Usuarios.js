@@ -101,7 +101,7 @@ const Controladores = {
             var password = await bcrypt.hash(DataEdit.Contraseña, saltos);            
             DataEdit.Contraseña = password
         }
-        db.collection('Usuarios').updateOne({_id: IdDelete},  {$set: DataEdit}, (err, data)=>{
+        db.collection('Usuarios').updateOne({idUsuario: IdDelete},  {$set: DataEdit}, (err, data)=>{
             if(data && !err){
                 res.status(200).json({Estado: true, Mensaje: 'El usuario se edito con exito'})
             }else{
@@ -110,6 +110,7 @@ const Controladores = {
         })
     },
 
+    
     view: (req, res)=>{
         db.collection('Usuarios').find().toArray((err, datos)=>{
             if(datos && !err){                
