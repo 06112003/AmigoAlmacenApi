@@ -14,7 +14,8 @@ const Controladores = {
                 idRef: parseInt(req.body.idRef),
                 detalles: req.body.detalles,
                 nvl: req.body.nvl,             
-                imagen: req.body.imagen
+                imagen: req.body.imagen,
+                idUsuario: req.body.idUsuario
             }     
 
             db.collection('Lista_Productos').findOne({idProducto: DataReport.idRef}, (err, data)=>{

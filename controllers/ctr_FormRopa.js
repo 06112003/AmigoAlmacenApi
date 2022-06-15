@@ -16,6 +16,7 @@ const Controladores = {
                 imagen: req.body.imagen,
                 talla: req.body.talla,
                 destinado: req.body.destinado,
+                idUsuario: req.body.idUsuario
             } 
 
             db.collection('Lista_Productos').find().sort({idProducto: -1}).toArray((err, data)=>{

@@ -14,7 +14,8 @@ const Controladores = {
                 stock: parseInt(req.body.stock),
                 imagen: req.body.imagen,
                 litros: parseInt(req.body.litros),
-                tipo: req.body.tipo                
+                tipo: req.body.tipo,
+                idUsuario: req.body.idUsuario        
             } 
             db.collection('Lista_Productos').find().sort({idProducto: -1}).toArray((err, data)=>{                
                 if(data && !err){

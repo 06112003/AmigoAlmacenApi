@@ -16,7 +16,8 @@ const Controladores = {
                 imagen: req.body.imagen,
                 vencimiento: req.body.vencimiento,
                 composicion: req.body.composicion,
-                grupo: req.body.grupo,            
+                grupo: req.body.grupo,  
+                idUsuario: req.body.idUsuario          
             } 
 
             db.collection('Lista_Productos').find().sort({idProducto: -1}).toArray((err, data)=>{                
@@ -41,7 +42,6 @@ const Controladores = {
                 }else{
                     res.status(404).json({Estado: false, Mensaje: 'Ocurrio un error y el servidor no registro tu comida'})
                 }
-                /*---------------------------------------------------------------------------------------------*/
             })
         }else{
             var UpdateComida = req.body
