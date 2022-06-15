@@ -164,6 +164,7 @@ const Controladores = {
                 },
                 {
                     $project: {
+                        foto: '$foto',
                         correo: '$correo',
                         telefono: '$telefono',
                         nombres: '$nombres',
