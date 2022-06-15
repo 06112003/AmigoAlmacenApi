@@ -125,7 +125,7 @@ const Controladores = {
             }
         })
     }, 
-//
+
 
 
     view: (req, res)=>{
@@ -172,7 +172,7 @@ const Controladores = {
                     }
                 }                
             ]).toArray((err, dato)=>{   
-                if(data && !err){             
+                if(dato && !err){             
                     var dataUser = dato[0]
                     if(!dataUser.productos) dataUser.productos = 0 
                     if(!dataUser.reportes) dataUser.reportes = 0 
