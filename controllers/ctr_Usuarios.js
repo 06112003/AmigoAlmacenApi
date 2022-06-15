@@ -110,7 +110,18 @@ const Controladores = {
         })
     },
 
-    
+    validarEstado: (req, res)=>{
+        var idUsuario = req.params.id
+        db.collection('Usuarios').findOne({idUsuario: idUsuario}, (err, data)=>{
+            if(data && !err){
+                var rstEstado = data.estado                
+                res.status(200).json({Estado: true, data: rstEstado})
+            }else{
+                res.status(404).json({Estado: false, data: false})
+            }
+        })
+    }, 
+
     view: (req, res)=>{
         db.collection('Usuarios').find().toArray((err, datos)=>{
             if(datos && !err){                
