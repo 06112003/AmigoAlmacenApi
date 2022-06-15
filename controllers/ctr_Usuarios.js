@@ -131,10 +131,17 @@ const Controladores = {
     view: (req, res)=>{
         var idUser = parseInt(req.params.id)
 
-        if(idUser == null){
+        if(idUser == 0){
             db.collection('Usuarios').find().toArray((err, datos)=>{
                 if(datos && !err){                
-                    res.status(200).json({Estado: true, data: datos})
+                    var datoEnv = {
+                        idUsuario: data.idUsuario,
+                        foto: data.foto,
+                        nombres: data.nombres,
+                        apellidos: data.apellidos,
+                        estado: data.estado
+                    }
+                    res.status(200).json({Estado: true, data: datoEnv})
                 }else{
                     res.status(404).json({Estado: false, data: null})
                 }
