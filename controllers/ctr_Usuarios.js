@@ -178,13 +178,16 @@ const Controladores = {
                         reportes: { $arrayElemAt: [ "$rstReportes.TotalReport", 0 ]},
                     }
                 }                
-            ]).toArray((err, dato)=>{                
-                var dataUser = dato[0]
-                if(!dataUser.productos) dataUser.productos = 0 
-                if(!dataUser.reportes) dataUser.reportes = 0 
+            ]).toArray((err, dato)=>{   
+                if(data && !err){             
+                    var dataUser = dato[0]
+                    if(!dataUser.productos) dataUser.productos = 0 
+                    if(!dataUser.reportes) dataUser.reportes = 0 
 
-                res.json({data: dataUser})
-                
+                    res.json({data: dataUser})
+                }else{
+                    res.json({data: {}})
+                }
             })
         }
     }
