@@ -125,7 +125,7 @@ const Controladores = {
             }
         })
     }, 
-
+//
 
 
     view: (req, res)=>{
