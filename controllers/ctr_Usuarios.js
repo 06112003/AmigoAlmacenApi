@@ -178,13 +178,26 @@ const Controladores = {
                     if(!dataUser.productos) dataUser.productos = 0 
                     if(!dataUser.reportes) dataUser.reportes = 0 
 
-                    res.json({data: dataUser})
+                    res.status(200).json({data: dataUser})
                 }else{
-                    res.json({data: {}})
+                    res.status(404).json({data: {}})
                 }
             })
         }
+    },
+
+
+    delete: (req, res)=>{
+        var idDelete = parseInt(req.params.id)
+        db.collection('Usuarios').deleteOne({idUsuario: idDelete}, (err, data)=>{
+            if(data && !err){
+                res.status(200).json({Estado: true, data: 'El usuario se elimino con exito' })
+            }else{
+                res.status(404).json({Estado: false, data: 'El usuario no se elimino con exito'})
+            }
+        })
     }
+    
 }
 
 module.exports = Controladores
