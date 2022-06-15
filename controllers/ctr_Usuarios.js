@@ -111,7 +111,7 @@ const Controladores = {
     },
 
     validarEstado: (req, res)=>{
-        var idUsuario = req.params.id
+        var idUsuario = parseInt(req.params.id)
         db.collection('Usuarios').findOne({idUsuario: idUsuario}, (err, data)=>{
             if(data && !err){
                 var rstEstado = data.estado                
