@@ -129,10 +129,12 @@ const Controladores = {
 
 
     view: (req, res)=>{
-        var idUser = parseInt(req.params.id)        
-
+        var param = req.params.id 
+        var idUser = parseInt(param.split('&')[0])    
+        
         if(idUser == 0){                        
-            var busqUser = req.params.busq || ''                        
+            var busqUser = req.params.busq || ''                                    
+            console.log(busqUser)
             db.collection('Usuarios').find({$or: [{nombres: {$regex: busqUser, '$options': 'i'}}, {apellidos: {$regex: busqUser, '$options': 'i'}}]}).toArray((err, datos)=>{
                 if(datos && !err){                
                     res.status(200).json({Estado: true, data: datos})
