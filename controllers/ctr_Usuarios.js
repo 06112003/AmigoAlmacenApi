@@ -129,10 +129,11 @@ const Controladores = {
 
 
     view: (req, res)=>{
-        var idUser = parseInt(req.params.id)
+        var idUser = parseInt(req.params.id)        
 
-        if(idUser == 0){
-            db.collection('Usuarios').find().toArray((err, datos)=>{
+        if(idUser == 0){                        
+            var busqUser = req.params.busq || ''                        
+            db.collection('Usuarios').find({$or: [{nombres: {$regex: busqUser, '$options': 'i'}}, {apellidos: {$regex: busqUser, '$options': 'i'}}]}).toArray((err, datos)=>{
                 if(datos && !err){                
                     res.status(200).json({Estado: true, data: datos})
                 }else{
@@ -197,7 +198,7 @@ const Controladores = {
             }
         })
     }
-    
+
 }
 
 module.exports = Controladores
