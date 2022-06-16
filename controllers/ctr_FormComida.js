@@ -58,13 +58,24 @@ const Controladores = {
     
     show: (req, res)=>{
         var IdShow = parseInt(req.params.id)
-        db.collection('Lista_Productos').findOne({idProducto: IdShow, categoria: 'Comidas'}, (err, data)=>{
-            if(data && !err){
-                res.status(200).json({Estado: true, Mensaje: 'Se encontraron los datos de la comida', dato: data})
-            }else{
-                res.status(404).json({Estado: false, Mensaje: 'No se encontraron los datos de la comida', dato: null})
-            }
-        })
+        if (IdShow != 0){
+            db.collection('Lista_Productos').findOne({idProducto: IdShow, categoria: 'Comidas'}, (err, data)=>{
+                if(data && !err){
+                    res.status(200).json({Estado: true, Mensaje: 'Se encontraron los datos de la comida', dato: data})
+                }else{
+                    res.status(404).json({Estado: false, Mensaje: 'No se encontraron los datos de la comida', dato: null})
+                }
+            })
+        }else {
+            db.collection('Lista_Productos').find({ categoria: 'Comidas'} ).toArray((err, data)=>{
+                if(data && !err){
+                    res.status(200).json({Estado: true, Mensaje: 'Se encontro la categoria comida', dato: data})
+                }else{
+                    res.status(404).json({Estado: false, Mensaje: 'No se encontro la categoria comida', dato: null})
+                }
+            })
+        }
+
     },
 
 
