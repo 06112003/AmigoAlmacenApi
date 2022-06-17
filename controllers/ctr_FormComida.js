@@ -89,7 +89,32 @@ const Controladores = {
                 res.status(404).json({Estado: false, Mensaje: 'No se pudo eliminar su comida'})
             }
         })
+    },
+
+
+    Vergraficos : (req, res)=>{
+        db.collection('Lista_Productos').aggregate(
+            [
+                {
+                    $match: {categoria : "Comidas"}
+                },
+                {
+                    $group: {
+                        _id : "$grupo",
+                        count : {$sum:1}
+                    }
+                }
+            ]
+        ).toArray((error,data)=>{
+            if(data && !error){
+                res.status(200).json({Estado: true,dato: data })
+            }else{
+                res.status(404).json({Estado: false,dato: null })
+            }
+        })
     }
+
+
 }
 
 module.exports = Controladores
