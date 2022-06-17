@@ -8,6 +8,7 @@ router.put('/EditUsuario/:id', ctr_Usuarios.edit)
 router.get('/ViewUsuario/:id', ctr_Usuarios.view),
 router.get('/VldEstado/:id', ctr_Usuarios.validarEstado)
 router.get('/DeleteUser/:id', ctr_Usuarios.delete),
+router.get('/Graficar', ctr_Usuarios.grafico)
 
 
 module.exports = router

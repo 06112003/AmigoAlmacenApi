@@ -189,6 +189,39 @@ const Controladores = {
     },
 
 
+    grafico: (req, res)=>{
+        db.collection('Usuarios').aggregate([
+            {
+                $lookup: {
+                    from:'Lista_Productos',
+                    localField: 'idUsuario',
+                    foreignField: 'idUsuario',
+                    as: 'Productos'
+                }
+            },         
+            {
+                $project: {
+                    nombre: '$nombres',
+                    cantidad: {$size: '$Productos.producto'},
+                }
+            },
+            {
+                $sort: {cantidad: -1}
+            },    
+            {
+                $limit: 5,
+            }
+        ]).toArray((err, data)=>{
+            console.log(data)
+            if(data && !err){
+                res.status(200).json({Estado: true, dato: data})
+            }else{
+                res.status(404).json({Estado: false, dato: null})
+            }
+        })
+    },
+
+
     delete: (req, res)=>{
         var idDelete = parseInt(req.params.id)
         db.collection('Usuarios').deleteOne({idUsuario: idDelete}, (err, data)=>{
