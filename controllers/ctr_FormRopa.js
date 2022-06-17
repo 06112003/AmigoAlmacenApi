@@ -59,9 +59,9 @@ const Controladores = {
     },
 
 
-    show: (req, res)=>{     
+    show: (req, res)=>{
         var IdShow = parseInt(req.params.id)
-        if(IdShow =! 0){
+        if(IdShow = 0){
             db.collection('Lista_Productos').findOne({idProducto: IdShow, categoria: 'Ropa'}, (err, data)=>{
                 if(data && !err){
                     res.status(200).json({Estado: true, Mensaje: 'Se encontraron los datos de la ropa', dato: data})
