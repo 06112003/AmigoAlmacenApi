@@ -209,7 +209,7 @@ const Controladores = {
                 $sort: {cantidad: -1}
             },    
             {
-                $limit: 5,
+                $limit: 2,
             }
         ]).toArray((err, data)=>{
             console.log(data)
