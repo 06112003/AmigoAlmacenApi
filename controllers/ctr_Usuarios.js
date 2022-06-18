@@ -202,7 +202,8 @@ const Controladores = {
             //{$unset: ["_id"]},    
             {
                 $project: {
-                    id: '$nombres',
+                    _id: '$nombres',
+                    id: '$idUsuario',
                     count: {$size: '$Productos.producto'},
                 }
             },
