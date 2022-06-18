@@ -190,29 +190,14 @@ const Controladores = {
 
 
     grafico: (req, res)=>{
-        db.collection('Usuarios').aggregate([
+        console.log("Entrando a gregicos")
+        db.collection('Usuarios').aggregate([            
             {
-                $lookup: {
-                    from:'Lista_Productos',
-                    localField: 'idUsuario',
-                    foreignField: 'idUsuario',
-                    as: 'Productos'
-                }
-            },     
-            //{$unset: ["_id"]},    
-            {
-                $project: {
-                    _id: '$nombres',
-                    id: '$foto',
-                    count: {$size: '$Productos.producto'},
-                }
+                $group: {
+                    _id: '$rol',                    
+                    count: {$sum: 1},
+                }   
             },
-            {
-                $sort: {cantidad: -1}
-            },    
-            {
-                $limit: 2,
-            }
         ]).toArray((err, data)=>{
             if(data && !err){
                 res.status(200).json({Estado: true, dato: data})
