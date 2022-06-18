@@ -10,5 +10,4 @@ router.get('/show_graf', ctr_FormRopa.show_graf)
 
 module.exports = router
 
-,,,,,;;;;;;
 
