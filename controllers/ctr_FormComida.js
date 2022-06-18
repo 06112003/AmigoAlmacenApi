@@ -97,10 +97,10 @@ const Controladores = {
             [
                 {
                     $match: {categoria : "Comidas"}
-                },                
+                },
                 {
                     $group: {
-                        id : "$grupo",
+                        _id : "$grupo",
                         count : {$sum:1}
                     }
                 },
