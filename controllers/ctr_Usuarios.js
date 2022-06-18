@@ -203,7 +203,7 @@ const Controladores = {
             {
                 $project: {
                     _id: '$nombres',
-                    id: '$idUsuario',
+                    id: '$foto',
                     count: {$size: '$Productos.producto'},
                 }
             },
