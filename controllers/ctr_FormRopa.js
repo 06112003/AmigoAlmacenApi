@@ -102,7 +102,7 @@ const Controladores = {
                 },
                 {
                     $group: {
-                        _id: "talla",
+                        _id: "$talla",
                         count: {
                             $sum: 1
                         }
