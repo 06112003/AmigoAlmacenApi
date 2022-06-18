@@ -93,8 +93,32 @@ const Controladores = {
                 res.status(404).json({Estado: false, Mensaje: 'No se pudo eliminar su bebida'})
             }
         })
-    }
+    },
     
+
+    show_graf: (req, res)=>{
+        db.collection('Lista_Productos').aggregate(
+            [
+                {
+                    $match: {categoria: "Bebidas"}
+                },
+                {
+                    $group: {
+                        _id: "tipo",
+                        count: {
+                            $sum: 1
+                        }
+                    }
+                }
+            ]
+        ).toArray((error, data)=>{
+            if(data && !error){
+                res.status(200).json({Estado: true, dato: data})
+            }else{
+                res.status(404).json({Estado: false, dato: null})
+            }
+        })
+    }
 
 
 }
