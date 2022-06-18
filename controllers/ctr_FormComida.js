@@ -97,13 +97,13 @@ const Controladores = {
             [
                 {
                     $match: {categoria : "Comidas"}
-                },
+                },                
                 {
                     $group: {
-                        _id : "$grupo",
+                        id : "$grupo",
                         count : {$sum:1}
                     }
-                }
+                },
             ]
         ).toArray((error,data)=>{
             if(data && !error){

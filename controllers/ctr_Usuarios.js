@@ -198,10 +198,11 @@ const Controladores = {
                     foreignField: 'idUsuario',
                     as: 'Productos'
                 }
-            },         
+            },     
+            {$unset: ["_id"]},    
             {
                 $project: {
-                    id: '$nombres',
+                    _id: '$nombres',
                     count: {$size: '$Productos.producto'},
                 }
             },
@@ -212,7 +213,6 @@ const Controladores = {
                 $limit: 2,
             }
         ]).toArray((err, data)=>{
-            console.log(data)
             if(data && !err){
                 res.status(200).json({Estado: true, dato: data})
             }else{
