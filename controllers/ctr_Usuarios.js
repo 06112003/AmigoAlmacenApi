@@ -199,7 +199,7 @@ const Controladores = {
                     as: 'Productos'
                 }
             },     
-            {$unset: ["_id"]},    
+            //{$unset: ["_id"]},    
             {
                 $project: {
                     _id: '$nombres',
