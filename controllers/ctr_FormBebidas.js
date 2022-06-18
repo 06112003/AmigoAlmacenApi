@@ -104,7 +104,7 @@ const Controladores = {
                 },
                 {
                     $group: {
-                        _id: "tipo",
+                        _id: "$tipo",
                         count: {
                             $sum: 1
                         }
