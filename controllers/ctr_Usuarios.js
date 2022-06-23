@@ -68,7 +68,8 @@ const Controladores = {
 
 
 
-    login: (req, res)=>{        
+    login: (req, res)=>{      
+        console.log("Entrando al login")  
         db.collection('Usuarios').find({$and: [{correo: req.body.correo}, {estado: true}]}).toArray((err, data)=>{
             if(data.length == 1 && !err){
                 //Verficiar password
