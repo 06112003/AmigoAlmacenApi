@@ -1,5 +1,6 @@
 const express = require('express')
 const dotenv = require("dotenv")
+const cors = require("cors")
 const app = express()
 
 //Ejecucion de Midelwares
@@ -7,14 +8,21 @@ app.use(express.urlencoded({extended: true}))
 app.use(express.json({limit: '70mb'}))
 dotenv.config()
 
+//Configuradndo cors
+var corsOption = {
+    origin: "*", 
+    optionsSuccessStatus: 200
+}
+app.use(cors(corsOption))
+
 //Configuracion de CORS 
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With,Content-Type, Accept, Access-Control-Allow-Request-Method');
     req.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
     res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
     next();
-});
+});*/
 
 //Lista de rutas
 const FormRopa = require('./router/Rt_FormRopa')
