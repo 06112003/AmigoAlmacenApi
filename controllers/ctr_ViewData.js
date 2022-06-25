@@ -8,20 +8,38 @@ const Controladores = {
         //Filtros generales
         var Categoria = req.body.Categoria || ''        
         var Busqueda = req.body.Busqueda || ''
+        //Obtener la pagina
+        var Pagina = parseInt(req.body.Pagina) || 1
+        var minRangoPage = (Pagina - 1) * 6
         //Filtros de orden
         var Stock = parseInt(req.body.Stock) || 0
         var Orden = {}        
         if(Stock != 0){
             Orden.stock = Stock
         }else{
-            Orden.producto = 1            
-        }           
-        console.log(Categoria);                               
-        db.collection('Lista_Productos').find({$and: [{categoria: {$regex: Categoria}}, {producto:  {$regex: Busqueda, "$options" : "i"}}]}).sort(Orden).toArray((err, data)=>{
-            if(data || !err){                
-                res.status(200).json({Estado: true, Mensaje: 'Se encontraron los productos', dato: data})
+            Orden.idProducto = -1            
+        }                                            
+        db.collection('Lista_Productos').find({$and: [{categoria: {$regex: Categoria}}, {producto:  {$regex: Busqueda, "$options" : "i"}}]}).limit(6).skip(minRangoPage).sort(Orden).toArray((err, data)=>{
+            if(data || !err){
+                //Variable con los productos
+                const ArrayData = data 
+                //---
+                db.collection('Lista_Productos').count((err, data)=>{
+                    if(data && !err){
+                        //Datos para el paginador
+                        const ctnResult = Math.ceil(parseInt(data) / 6)
+                        const dataPaginador = {
+                            PageMax:  ctnResult,
+                            PageAct: Pagina
+                        }
+                        //---
+                        res.status(200).json({Estado: true, Mensaje: 'Se encontraron los productos', dato: ArrayData, pageData: dataPaginador})
+                    }else{
+                        res.status(404).json({Estado: false, Mensaje: 'No pudieron encontrar el total de registros dentro de la base de datos', dato: null, pageData: null})        
+                    }
+                })                                
             }else{
-                res.status(404).json({Estado: false, Mensaje: 'No tiene ningun producto con esos filtros', dato: null})
+                res.status(404).json({Estado: false, Mensaje: 'No tiene ningun producto con esos filtros', dato: null, pageData: null})
             }
         })
     },
