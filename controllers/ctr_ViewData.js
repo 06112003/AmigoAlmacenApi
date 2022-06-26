@@ -29,6 +29,7 @@ const Controladores = {
             var ctnResult = await consultDB.count()
             var dataEnv =   await consultDB.skip(minRangoPage).limit(6).toArray()                                  
             dataPaginador.PageMax = Math.ceil(ctnResult / 6) 
+            console.log(dataEnv)
             res.status(200).json({Estado: true, Mensaje: 'Se encontraron los datos del producto con exito', dato: dataEnv, dataPaginador})
         }catch(err){
             console.log(err)
