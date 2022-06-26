@@ -18,15 +18,21 @@ const Controladores = {
             Orden.stock = Stock
         }else{
             Orden.idProducto = -1            
-        }    
-        var consultGeneral = db.collection('Lista_Productos').find({$and: [{categoria: {$regex: Categoria}}, {producto:  {$regex: Busqueda, "$options" : "i"}}]})                                        
-        consultGeneral.limit(6).skip(minRangoPage).sort(Orden).toArray((err, data)=>{
+        }   
+        var GenFilt = {
+            $and: [
+                {categoria: {$regex: Categoria}}, 
+                {producto:  {$regex: Busqueda, "$options" : "i"}}
+            ]
+        }                                         
+        db.collection('Lista_Productos').find(GenFilt).limit(6).skip(minRangoPage).sort(Orden).toArray((err, data)=>{
             if(data || !err){
                 //Variable con los productos
                 const ArrayData = data 
                 //---
-                consultGeneral.count((err, data)=>{
+                db.collection('Lista_Productos').find(GenFilt).toArray.count((err, data)=>{
                     if(data && !err){
+                        console.log(data)
                         //Datos para el paginador
                         const ctnResult = Math.ceil(parseInt(data) / 6)
                         const dataPaginador = {
