@@ -189,6 +189,7 @@ const Controladores = {
     },
 
 
+
     grafico: (req, res)=>{
         console.log("Entrando a gregicos")
         db.collection('Usuarios').aggregate([            
@@ -208,6 +209,7 @@ const Controladores = {
     },
 
 
+    
     delete: (req, res)=>{
         var idDelete = parseInt(req.params.id)
         db.collection('Usuarios').deleteOne({idUsuario: idDelete}, (err, data)=>{
@@ -219,6 +221,7 @@ const Controladores = {
         })
     }
 
+    
 }
 
 module.exports = Controladores

@@ -10,7 +10,7 @@ const Controladores = {
         var Busqueda = req.body.Busqueda || ''
         //Obtener la pagina
         var Pagina = parseInt(req.body.Pagina) || 1
-        var minRangoPage = (Pagina - 1) * 6
+        var minRangoPage = (Pagina - 1) * 10
         var dataPaginador = {
             PageMax:  0,
             PageAct: Pagina
@@ -27,8 +27,8 @@ const Controladores = {
         try{                                                     
             var consultDB =  await db.collection('Lista_Productos').find({$and: [{categoria: {$regex: Categoria}}, {producto:  {$regex: Busqueda, "$options" : "i"}}]}).sort(Orden)            
             var ctnResult = await consultDB.count()
-            var dataEnv =   await consultDB.skip(minRangoPage).limit(6).toArray()                                  
-            dataPaginador.PageMax = Math.ceil(ctnResult / 6) 
+            var dataEnv =   await consultDB.skip(minRangoPage).limit(10).toArray()                                  
+            dataPaginador.PageMax = Math.ceil(ctnResult / 10) 
             res.status(200).json({Estado: true, Mensaje: 'Se encontraron los datos del producto con exito', dato: dataEnv, dataPaginador})
         }catch(err){
             console.log(err)
@@ -43,32 +43,27 @@ const Controladores = {
         var Busqueda = req.body.Busqueda || ''
         //Filtros de orden
         var Perdidas = parseInt(req.body.Perdidas) || 0
+        //Estbleacer el orden
         var Orden = {}
-        if(Perdidas !=  0){
-            Orden.perdidas = Perdidas
-        }else{
-            Orden.producto = 1
-        }                    
+        if(Perdidas !=  0) Orden.perdidas = Perdidas
+        else Orden.producto = 1
+        //Generar la consulta         
         db.collection('Lista_Reportes').aggregate([                                                                            
             {
-                //Establecemos la relacion de la coleccion
                 $lookup: {
-                    from: 'Lista_Productos',//Coleccion con la que lo vamos a relacionar
-                    localField: 'idRef',//En base a que lo vamos a relaconar
-                    foreignField: 'idProducto',//Elemento que tiene que estar relacionado con idRef
-                    as: 'dataProducto'//Nombre que se le asigna al conjunto de datos relacionados
+                    from: 'Lista_Productos',
+                    localField: 'idRef',
+                    foreignField: 'idProducto',
+                    as: 'dataProducto'
                 }
             },            
             {
-                //Se crea un duplicada con los datos fucionados de ambas colleciones
                 $unwind: '$dataProducto'
             },
             {
-                //Colocamos el find con el que van a aparecer los reportes             
                 $match: {$and: [{nvl: {$regex: Estado}}, {'dataProducto.producto':  {$regex: Busqueda, "$options" : "i"}}]},
             },            
             {
-                //Los datos que al fina va a estar retornando
                 $project: {
                     idReporte: "$idReporte",
                     producto: "$dataProducto.producto",                            
@@ -79,7 +74,6 @@ const Controladores = {
                 },
             },            
             {
-                //El orden con el que van a salir los productos
                 $sort: Orden
             }                                                                    
             ]).toArray((err, data)=>{
