@@ -27,11 +27,13 @@ const Controladores = {
         try{                                                     
             var consultDB =  await db.collection('Lista_Productos').find({$and: [{categoria: {$regex: Categoria}}, {producto:  {$regex: Busqueda, "$options" : "i"}}]}).sort(Orden)            
             var ctnResult = await consultDB.count()
-            var dataEnv =   await consultDB.skip(minRangoPage).limit(10).toArray()                                  
+            var dataEnv =   await consultDB.skip(minRangoPage).limit(10).toArray()                                              
             dataPaginador.PageMax = Math.ceil(ctnResult / 10) 
+            //Ordenar el array por fecha
+            dataEnv.sort((a, b)=> a.fecha > b.fecha)
+            //---
             res.status(200).json({Estado: true, Mensaje: 'Se encontraron los datos del producto con exito', dato: dataEnv, dataPaginador})
         }catch(err){
-            console.log(err)
             res.status(404).json({Estado: false, Mensaje: 'Ocurrio un error al generar su consulta', dato: [], dataPaginador})
         }
     },
