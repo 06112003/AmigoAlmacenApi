@@ -78,6 +78,8 @@ const Controladores = {
                     "UserID": data[0].idUsuario,
                     "nombres": data[0].nombres,
                     "apellidos": data[0].apellidos,
+                    "telefono": data[0].telefono,
+                    "correo": data[0].correo,
                     "foto": data[0].foto,
                     "rol": data[0].rol
                 }

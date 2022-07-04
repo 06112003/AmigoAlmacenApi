@@ -22,7 +22,7 @@ const FormBebidas = require('./router/Rt_FormBebidas')
 const FormComida = require('./router/Rt_FormComida')
 const FormResportes = require('./router/Rt_FormReportes')
 const ViewData = require('./router/Rt_ViewData')
-const Usuarios = require('./router/Rt_Uusarios')
+const Usuarios = require('./router/Rt_Usuarios')
 
 //Direccionando rutas
 app.use('/FormRopa', FormRopa)
