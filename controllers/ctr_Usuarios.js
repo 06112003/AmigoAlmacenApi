@@ -14,36 +14,30 @@ const Controladores = {
 
 
     new: async(req, res)=> {           
-        var Estado = parseInt(req.params.cnd)        
-        
-        /*-----------------------REGISTRANDO NUEVO USUARIO-----------------------*/
+        var Estado = parseInt(req.params.cnd)                
+        /*-------------Registrando nuevo usuario-------------*/
         if(Estado == 0){
             cloudinary.uploader.upload(req.body.foto, {
                 folder: 'Perfil_User'
             }, (err, data)=>{
-                if(data && !err){
-                    var NewUser = {
-                        foto: data.secure_url,
-                        id_foto: data.public_id,
-                        nombres: req.body.nombres,
-                        apellidos: req.body.apellidos,
-                        telefono: req.body.telefono,
-                        correo: req.body.correo,
-                        password: req.body.password,                    
-                        estado: false,
-                        rol: 'User'
-                    }        
+                if(data && !err){                    
+                    //1. Datos del nuevo usario
+                    var NewUser = req.body
+                    NewUser.foto = data.secure_url
+                    NewUser.id_foto = data.public_id
+                    NewUser.estado = false
+                    NewUser.rol = 'User'
+                    //--
                     db.collection('Usuarios').findOne({correo: NewUser.correo}, (err, data)=>{
                         if(err || data){
                             res.status(404).json({Estado: false, Mensaje: 'Su correo ya esta registrado'})
                         }else{
                             db.collection('Usuarios').find().sort({_id: -1}).toArray(async(err, data)=>{
                                 if(data && !err){
-                                    //Enciptamos la contraseña
+                                    //2. Enciptamos la contraseña
                                     var saltos = await bcrypt.genSalt(10);
                                     var password = await bcrypt.hash(NewUser.password, saltos);
-                                    NewUser.password = password                         
-                                    //--               
+                                    NewUser.password = password                                                                            
                                     var NewId = 1
                                     if(data[0]){        
                                         var NewId = parseInt(data[0].idUsuario) + 1
@@ -68,39 +62,39 @@ const Controladores = {
                     res.status(404).json({Estado: false, Mensaje: 'El servidor no pudo procesar su imagen'})
                 }
             }) 
-            /*---------------------ACTUALIZANDO EL PERFIL DEL USUARIO---------------------*/
+        /*-------------Actualizando el usuario-------------*/
         }else{
-            db.collection('Usuarios').findOne({idUsuario: Estado}).then(async(err, data)=>{
+            db.collection('Usuarios').findOne({idUsuario: Estado}, async(err, data)=>{                
                 if(data && !err){
-                    var dataUpdate = req.body
-                    var comparePassword = bcrypt.compare(dataUpdate.valPassword, data.password)
-                    if(comparePassword){
-                        delete dataUpdate.valPassword
+                    var dataUpdate = req.body                    
+                    var comparePassword = bcrypt.compare(dataUpdate.vrfPassword, data.password)
+                    delete dataUpdate.vrfPassword
+                    //1. Verficando si los datos estan vacios                    
+                    if(comparePassword){                                                
                         if(dataUpdate.password == ''){
-                            delete dataUpdate.valPassword
+                            delete dataUpdate.vrfPassword
                         }
                         if(dataUpdate.foto == ''){
                             delete dataUpdate.foto
                         }else{
-                            var updateImage =  await cloudinary.uploader.upload(
-                                dataUpdate.foto, {public_id: data.id_foto, invalidate: true}
+                            //2. Actualizando la imagen
+                            var updateImage =  await cloudinary.uploader.upload( dataUpdate.foto, 
+                                {public_id: data.id_foto, invalidate: true}
                             )
                             dataUpdate.foto = updateImage.secure_url
                             dataUpdate.id_foto = updateImage.public_id                                                          
-                        }
-                        db.collection('Usuarios').updateOne({_id: Estado}, {$set: dataUpdate}).then((err, data)=>{
-                            if(data && !err){
-                                res.json({Estado: true})                                
-                            }else{
-                                res.json({Estado: false})
-                            }                            
+                        }      
+                        //3. Ingrezando los datos actualizados                                          
+                        db.collection('Usuarios').updateOne({idUsuario: Estado}, {$set: dataUpdate}).then((err, data)=>{
+                            if(data && !err) res.json({Estado: true})                                
+                            else res.json({Estado: false})                                                        
                         })
-                    }else{
+                    }else {
                         res.json({Estado: false})
-                    }
-                }else{
-                    res.json({Estado: false})
-                }
+                    }                    
+                }else{ 
+                    res.json({Estado: false}) 
+                } 
             })
         }       
     },
@@ -212,7 +206,6 @@ const Controladores = {
 
 
     grafico: (req, res)=>{
-        console.log("Entrando a gregicos")
         db.collection('Usuarios').aggregate([            
             {
                 $group: {
