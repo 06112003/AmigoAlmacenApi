@@ -13,57 +13,96 @@ cloudinary.config({
 const Controladores = {
 
 
-    new: async(req, res)=> {             
-        cloudinary.uploader.upload(req.body.foto, {
-            folder: 'Perfil_User'
-        }, (err, data)=>{
-            if(data && !err){
-                var NewUser = {
-                    foto: data.secure_url,
-                    id_foto: data.public_id,
-                    nombres: req.body.nombres,
-                    apellidos: req.body.apellidos,
-                    telefono: req.body.telefono,
-                    correo: req.body.correo,
-                    password: req.body.password,                    
-                    estado: false,
-                    rol: 'User'
-                }        
-                db.collection('Usuarios').findOne({correo: NewUser.correo}, (err, data)=>{
-                    if(err || data){
-                        res.status(404).json({Estado: false, Mensaje: 'Su correo ya esta registrado'})
-                    }else{
-                        db.collection('Usuarios').find().sort({_id: -1}).toArray(async(err, data)=>{
-                            if(data && !err){
-                                //ENCRIPTAMOS LA CONTRASEÑA
-                                var saltos = await bcrypt.genSalt(10);
-                                var password = await bcrypt.hash(NewUser.password, saltos);
-                                NewUser.password = password                         
-                                //               
-                                var NewId = 1
-                                if(data[0]){        
-                                    var NewId = parseInt(data[0].idUsuario) + 1
-                                }
-                                NewUser.idUsuario = NewId 
-                                NewUser.fecha = new Date()
-                                //
-                                db.collection('Usuarios').insertOne(NewUser, (err, data)=>{
-                                    if(data && !err){
-                                        res.status(200).json({Estado: true, Mensaje: 'El usuario se registro con exito'})
-                                    }else{
-                                        res.status(404).json({Estado: false, Mensaje: 'Ocurrio un error el ingrezar el usuario'})
+    new: async(req, res)=> {           
+        var Estado = parseInt(req.params.cnd)        
+        
+        /*-----------------------REGISTRANDO NUEVO USUARIO-----------------------*/
+        if(Estado == 0){
+            cloudinary.uploader.upload(req.body.foto, {
+                folder: 'Perfil_User'
+            }, (err, data)=>{
+                if(data && !err){
+                    var NewUser = {
+                        foto: data.secure_url,
+                        id_foto: data.public_id,
+                        nombres: req.body.nombres,
+                        apellidos: req.body.apellidos,
+                        telefono: req.body.telefono,
+                        correo: req.body.correo,
+                        password: req.body.password,                    
+                        estado: false,
+                        rol: 'User'
+                    }        
+                    db.collection('Usuarios').findOne({correo: NewUser.correo}, (err, data)=>{
+                        if(err || data){
+                            res.status(404).json({Estado: false, Mensaje: 'Su correo ya esta registrado'})
+                        }else{
+                            db.collection('Usuarios').find().sort({_id: -1}).toArray(async(err, data)=>{
+                                if(data && !err){
+                                    //Enciptamos la contraseña
+                                    var saltos = await bcrypt.genSalt(10);
+                                    var password = await bcrypt.hash(NewUser.password, saltos);
+                                    NewUser.password = password                         
+                                    //--               
+                                    var NewId = 1
+                                    if(data[0]){        
+                                        var NewId = parseInt(data[0].idUsuario) + 1
                                     }
-                                })
+                                    NewUser.idUsuario = NewId 
+                                    NewUser.fecha = new Date()
+                                    //--
+                                    db.collection('Usuarios').insertOne(NewUser, (err, data)=>{
+                                        if(data && !err){
+                                            res.status(200).json({Estado: true, Mensaje: 'El usuario se registro con exito'})
+                                        }else{
+                                            res.status(404).json({Estado: false, Mensaje: 'Ocurrio un error el ingrezar el usuario'})
+                                        }
+                                    })
+                                }else{
+                                    res.status(404).json({Estado: false, Mensaje: 'El servidor tiene un proble y no puede ingrezar su usuario'})
+                                }
+                            })                
+                        }
+                    })
+                }else{
+                    res.status(404).json({Estado: false, Mensaje: 'El servidor no pudo procesar su imagen'})
+                }
+            }) 
+            /*---------------------ACTUALIZANDO EL PERFIL DEL USUARIO---------------------*/
+        }else{
+            db.collection('Usuarios').findOne({idUsuario: Estado}).then(async(err, data)=>{
+                if(data && !err){
+                    var dataUpdate = req.body
+                    var comparePassword = bcrypt.compare(dataUpdate.valPassword, data.password)
+                    if(comparePassword){
+                        delete dataUpdate.valPassword
+                        if(dataUpdate.password == ''){
+                            delete dataUpdate.valPassword
+                        }
+                        if(dataUpdate.foto == ''){
+                            delete dataUpdate.foto
+                        }else{
+                            var updateImage =  await cloudinary.uploader.upload(
+                                dataUpdate.foto, {public_id: data.id_foto, invalidate: true}
+                            )
+                            dataUpdate.foto = updateImage.secure_url
+                            dataUpdate.id_foto = updateImage.public_id                                                          
+                        }
+                        db.collection('Usuarios').updateOne({_id: Estado}, {$set: dataUpdate}).then((err, data)=>{
+                            if(data && !err){
+                                res.json({Estado: true})                                
                             }else{
-                                res.status(404).json({Estado: false, Mensaje: 'El servidor tiene un proble y no puede ingrezar su usuario'})
-                            }
-                        })                
+                                res.json({Estado: false})
+                            }                            
+                        })
+                    }else{
+                        res.json({Estado: false})
                     }
-                })
-            }else{
-                res.status(404).json({Estado: false, Mensaje: 'El servidor no pudo procesar su imagen'})
-            }
-        })        
+                }else{
+                    res.json({Estado: false})
+                }
+            })
+        }       
     },
 
 
@@ -90,26 +129,6 @@ const Controladores = {
                 }
             }else{
                 res.status(404).json({Estado: false, dato: null, Mensaje: 'Su cuenta no esta habilitada'})
-            }
-        })
-    },
-
-
-
-    edit: async(req, res)=>{
-        var IdDelete = parseInt(req.params.id)
-        var DataEdit = req.body
-
-        if(DataEdit.Contraseña){
-            var saltos = await bcrypt.genSalt(10);
-            var password = await bcrypt.hash(DataEdit.Contraseña, saltos);            
-            DataEdit.Contraseña = password
-        }
-        db.collection('Usuarios').updateOne({idUsuario: IdDelete},  {$set: DataEdit}, (err, data)=>{
-            if(data && !err){
-                res.status(200).json({Estado: true, Mensaje: 'El usuario se edito con exito'})
-            }else{
-                res.status(404).json({Estado: false, Mensaje: 'No se pudo editar el usuario'})
             }
         })
     },
