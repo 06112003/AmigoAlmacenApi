@@ -72,7 +72,7 @@ const Controladores = {
                     //1. Verficando si los datos estan vacios                    
                     if(comparePassword){                                                
                         if(dataUpdate.password == ''){
-                            delete dataUpdate.vrfPassword
+                            delete dataUpdate.password
                         }
                         if(dataUpdate.foto == ''){
                             delete dataUpdate.foto
