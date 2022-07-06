@@ -67,9 +67,9 @@ const Controladores = {
             db.collection('Usuarios').findOne({idUsuario: Estado}, async(err, data)=>{                
                 if(data && !err){
                     var dataUpdate = req.body                    
-                    var comparePassword = bcrypt.compare(dataUpdate.vrfPassword, data.password)
+                    var comparePassword = await bcrypt.compare(dataUpdate.vrfPassword, data.password)
                     delete dataUpdate.vrfPassword
-                    //1. Verficando los datos de la contraseña                    
+                    //1. Verficando los datos de la contraseña     
                     if(comparePassword){             
                         if(dataUpdate.password == ''){
                             delete dataUpdate.password
