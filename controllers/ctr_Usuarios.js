@@ -69,15 +69,19 @@ const Controladores = {
                     var dataUpdate = req.body                    
                     var comparePassword = bcrypt.compare(dataUpdate.vrfPassword, data.password)
                     delete dataUpdate.vrfPassword
-                    //1. Verficando si los datos estan vacios                    
-                    if(comparePassword){                                                
+                    //1. Verficando los datos de la contraseña                    
+                    if(comparePassword){             
                         if(dataUpdate.password == ''){
                             delete dataUpdate.password
+                        }else{
+                            var saltos = await bcrypt.genSalt(10)
+                            var encryptPas = await bcrypt.hash(dataUpdate.password, saltos)
+                            dataUpdate.password = encryptPas 
                         }
+                        //2. Verificamos los datos de la foto
                         if(dataUpdate.foto == ''){
                             delete dataUpdate.foto
                         }else{
-                            //2. Actualizando la imagen
                             var updateImage =  await cloudinary.uploader.upload( dataUpdate.foto, 
                                 {public_id: data.id_foto, invalidate: true}
                             )
@@ -85,9 +89,9 @@ const Controladores = {
                             dataUpdate.id_foto = updateImage.public_id                                                          
                         }      
                         //3. Ingrezando los datos actualizados                                          
-                        db.collection('Usuarios').updateOne({idUsuario: Estado}, {$set: dataUpdate}).then((err, data)=>{
+                        db.collection('Usuarios').updateOne({idUsuario: Estado}, {$set: dataUpdate}, (err, data)=>{
                             if(data && !err) res.json({Estado: true})                                
-                            else res.json({Estado: false})                                                        
+                            else res.json({Estado: false})
                         })
                     }else {
                         res.json({Estado: false})
