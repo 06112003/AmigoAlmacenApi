@@ -23,7 +23,7 @@ const Controladores = {
             Orden.idProducto = -1            
         } 
         //Generando la consulta
-        try{                                                     
+        try{                                                                 
             var consultDB =  await db.collection('Lista_Productos').find({categoria: {$regex: Categoria}}).sort(Orden)            
             var ctnResult = await consultDB.count()
             var dataEnv =   await consultDB.skip(minRangoPage).limit(10).toArray()                                              
@@ -37,16 +37,21 @@ const Controladores = {
         }
     },
 
+
+    
     searchProductos: (req, res)=>{
         var Busq = req.query.bsq || ''
-        db.collection('Lista_Productos').find({producto: {$regex: Busq, "$options" : "i"}}).toArray((err, dato)=>{
-            if(dato && !err){
-                res.status(200).json({Estado: true, data: dato})
+        console.log(Busq)
+        db.collection('Lista_Productos').find({producto: {$regex: Busq, "$options" : "i"}}).toArray((err, data)=>{
+            if(data && !err){
+                res.status(200).json({Estado: true, dato: data})
             }else{  
-                res.status(404).json({Estado: false, data: []})
+                res.status(404).json({Estado: false, dato: []})
             }
         })
     },
+
+
 
     ViewResportes: (req, res)=>{     
         //Filtros generales
