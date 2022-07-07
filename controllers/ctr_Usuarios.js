@@ -147,20 +147,33 @@ const Controladores = {
 
 
 
-    view: (req, res)=>{
-        var param = req.params.id 
-        var idUser = parseInt(param.split('&')[0])    
-        
-        if(idUser == 0){                        
-            var busqUser = param.split('&')[1] || ''     
-            db.collection('Usuarios').find({$or: [{nombres: {$regex: busqUser, '$options': 'i'}}, {apellidos: {$regex: busqUser, '$options': 'i'}}]}).toArray((err, datos)=>{
-                if(datos && !err){                
-                    res.status(200).json({Estado: true, data: datos})
-                }else{
-                    res.status(404).json({Estado: false, data: null})
-                }
-            })
+    view: async(req, res)=>{
+        var idUser = parseInt(req.params.id) 
+        if(idUser == 0){                     
+            /*1. Declarando los filtros */                                                                     
+            var ordenFilt =  parseInt(req.query.Orden || -1)
+            var pageAct = parseInt(req.query.Page || 1)
+            var rangoPage = (pageAct - 1) * 5
+            var busqUser = req.query.Busq || ''    
+            var roles = req.query.Rol || ''                                            
+
+            /*2. Generando la consulta */
+            try{
+                //Consulta genereal
+                var consult = await db.collection('Usuarios').find({$and: [{nombres: {$regex: busqUser, '$options': 'i'}}, {apellidos: {$regex: busqUser, '$options': 'i'}}, {rol: {$regex: roles}}]}).skip(rangoPage).sort({idUsuario: ordenFilt})
+                //Ordenando los resultados
+                var ctnRegistros = await consult.count()
+                var totalPage = Math.ceil(ctnRegistros / 5) 
+                var dataArray = await  consult.limit(5).toArray()
+                //--
+                res.status(200).json({Estado: true, data: dataArray, maxPage: totalPage})
+            }catch(err){
+                console.log(err)
+                res.status(404).json({Estado: false, data: null, maxPage: 0})
+            }
+            
         }else{
+            /*3. Datos de usuario especifico */
             db.collection('Usuarios').aggregate([   
                 {
                     $match: {idUsuario: idUser}
