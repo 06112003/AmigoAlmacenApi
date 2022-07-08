@@ -155,6 +155,28 @@ const Controladores = {
     },
 
 
+
+    //---------------------------EDITAR EL ESTADO DEL USUARIO---------------------------//
+    
+    edit: async(req, res)=>{
+        var IdDelete = parseInt(req.params.id)
+        var DataEdit = req.body
+
+        if(DataEdit.Contraseña){
+            var saltos = await bcrypt.genSalt(10);
+            var password = await bcrypt.hash(DataEdit.Contraseña, saltos);            
+            DataEdit.Contraseña = password
+        }
+        db.collection('Usuarios').updateOne({idUsuario: IdDelete},  {$set: DataEdit}, (err, data)=>{
+            if(data && !err){
+                res.status(200).json({Estado: true, Mensaje: 'El usuario se edito con exito'})
+            }else{
+                res.status(404).json({Estado: false, Mensaje: 'No se pudo editar el usuario'})
+            }
+        })
+    },
+
+
     
     //---------------------------VERIFICA EL USUARIO ACTIVO---------------------------//
     
