@@ -252,12 +252,12 @@ const Controladores = {
     //---------------------------OBTIENE LOS DATOS PARA EL BUSCADOR---------------------------//
     
     searchUsuario: (req, res)=>{
-        db.collection('Usuarios').find().toArray((err, data)=>{
-            if(data && !err){
-                var dataFinal = obtDataArray(data)         
-                res.status(200).json({Estado: true, dato: dataFinal})
+        db.collection('Usuarios').find().toArray((err, dato)=>{
+            if(dato && !err){
+                var dataFinal = obtDataArray(dato)         
+                res.status(200).json({Estado: true, data: dataFinal})
             }else{  
-                res.status(404).json({Estado: false, dato: []})
+                res.status(404).json({Estado: false, data: []})
             }
         })
     },
