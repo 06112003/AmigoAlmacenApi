@@ -25,12 +25,12 @@ function obtDataArray(array){
 
 
 
-//---------------------------FUNCIONES PARA LA DB---------------------------//
 
 const Controladores = {    
 
 
-    /*----AGREGANDO NUEVOS USUARIOS----*/    
+    //---------------------------AGREGANDO NUEVOS USUARIOS---------------------------//    
+    
     new: async(req, res)=> {                   
         var Estado = parseInt(req.params.cnd)                
         //Registrando nuevo usuario 
@@ -126,7 +126,8 @@ const Controladores = {
 
 
 
-    /*----LOGEANDO A LOS USUARIOS----*/
+    //---------------------------LOGEANDO A LOS USUARIOS---------------------------//
+    
     login: (req, res)=>{      
         db.collection('Usuarios').findOne({$and: [{correo: req.body.correo}, {estado: true}]}, (err, data)=>{
             if(data && !err){
@@ -155,7 +156,8 @@ const Controladores = {
 
 
     
-    /*----VERIFICA EL USUARIO ACTIVO----*/
+    //---------------------------VERIFICA EL USUARIO ACTIVO---------------------------//
+    
     validarEstado: (req, res)=>{
         var idUsuario = parseInt(req.params.id)
         db.collection('Usuarios').findOne({idUsuario: idUsuario}, (err, data)=>{
@@ -170,7 +172,8 @@ const Controladores = {
 
 
 
-    /*----OBTIENE EL DATO O LOS DATOS----*/    
+    //---------------------------OBTIENE EL DATO O LOS DATOS---------------------------//
+
     view: async(req, res)=>{
         var idUser = parseInt(req.params.id) 
         if(idUser == 0){                     
@@ -246,7 +249,8 @@ const Controladores = {
 
 
 
-    /*----OBTIENE LOS DATOS PARA EL BUSCADOR----*/
+    //---------------------------OBTIENE LOS DATOS PARA EL BUSCADOR---------------------------//
+    
     searchUsuario: (req, res)=>{
         db.collection('Usuarios').find().toArray((err, data)=>{
             if(data && !err){
@@ -260,7 +264,8 @@ const Controladores = {
 
 
 
-    /*----DATOS PARA EL GRAFICO----*/
+    //---------------------------DATOS PARA EL GRAFICO---------------------------//
+
     grafico: (req, res)=>{
         db.collection('Usuarios').aggregate([            
             {
@@ -277,7 +282,8 @@ const Controladores = {
 
 
     
-    /*----ELIMINA AL USUARIO SELECCIONADO----*/
+    //---------------------------ELIMINA AL USUARIO SELECCIONADO---------------------------//
+    
     delete: (req, res)=>{
         var idDelete = parseInt(req.params.id)
         db.collection('Usuarios').deleteOne({idUsuario: idDelete}, (err, data)=>{
