@@ -181,11 +181,11 @@ const Controladores = {
             var roles = req.query.Rol || ''                                            
             try{
                 //Consulta genereal
-                var consult = await db.collection('Usuarios').find({rol: {$regex: roles}}).skip(rangoPage).sort({idUsuario: ordenFilt})
+                var consult = await db.collection('Usuarios').find({rol: {$regex: roles}}).sort({idUsuario: ordenFilt})
                 //Ordenando los resultados
                 var ctnRegistros = await consult.count()
                 var totalPage = Math.ceil(ctnRegistros / 5) 
-                var dataArray = await  consult.limit(5).toArray()    
+                var dataArray = await  consult.skip(rangoPage).limit(5).toArray()    
                 var dataFinal = obtDataArray(dataArray)            
                 //Respuesta positiva
                 res.status(200).json({Estado: true, data: dataFinal, maxPage: totalPage})
