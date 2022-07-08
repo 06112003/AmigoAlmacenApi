@@ -40,9 +40,7 @@ const Controladores = {
 
     
     searchProductos: (req, res)=>{
-        var Busq = req.query.bsq || ''
-        console.log(Busq)
-        db.collection('Lista_Productos').find({producto: {$regex: Busq, "$options" : "i"}}).toArray((err, data)=>{
+        db.collection('Lista_Productos').find().toArray((err, data)=>{
             if(data && !err){
                 res.status(200).json({Estado: true, dato: data})
             }else{  
