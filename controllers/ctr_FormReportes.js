@@ -54,6 +54,8 @@ const Controladores = {
                 idRef: parseInt(req.body.idRef),
                 detalles: req.body.detalles
             }
+            console.log(UpdateReportes)
+            
             db.collection('Lista_Reportes').updateOne({idReporte: Estado}, {$set: UpdateReportes}, (err, data)=>{
                 if(data && !err){
                     res.status(200).json({Estado: true, Mensaje: 'Su reporte se edito con exito'})
