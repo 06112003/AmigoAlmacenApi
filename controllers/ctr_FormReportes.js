@@ -47,7 +47,13 @@ const Controladores = {
                 }
             })
         }else{
-            const UpdateReportes = req.body
+            const UpdateReportes = {
+                imagen: req.body.imagen,
+                nvl: req.body.nvl,     
+                perdidas: parseInt(req.body.perdidas),        
+                idRef: parseInt(req.body.idRef),
+                detalles: req.body.detalles
+            }
             db.collection('Lista_Reportes').updateOne({idReporte: Estado}, {$set: UpdateReportes}, (err, data)=>{
                 if(data && !err){
                     res.status(200).json({Estado: true, Mensaje: 'Su reporte se edito con exito'})
