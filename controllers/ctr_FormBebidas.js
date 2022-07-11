@@ -40,8 +40,15 @@ const Controladores = {
                     res.status(404).json({Estado: false, Mensaje: 'Ocurrio un error y el servidor no registro tu bebida'})
                 }
             })
-        }else{
-            var UpdateBebidas = req.body
+        }else{            
+            var UpdateBebidas = {
+                producto: req.body.producto,
+                proveedor: req.body.proveedor,
+                stock: parseInt(req.body.stock),
+                imagen: req.body.imagen,
+                litros: parseInt(req.body.litros),
+                tipo: req.body.tipo,
+            }
 
             db.collection('Lista_Productos').updateOne({idProducto: Estado}, {$set: UpdateBebidas}, (err, data)=>{
                 if(data && !err){

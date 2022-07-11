@@ -54,7 +54,6 @@ const Controladores = {
                 idRef: parseInt(req.body.idRef),
                 detalles: req.body.detalles
             }
-            console.log(UpdateReportes)
             
             db.collection('Lista_Reportes').updateOne({idReporte: Estado}, {$set: UpdateReportes}, (err, data)=>{
                 if(data && !err){
