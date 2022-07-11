@@ -84,9 +84,13 @@ const Controladores = {
                     proveedor: "$dataProducto.proveedor",                            
                     imagen: "$imagen",                            
                     nvl: "$nvl",                      
-                    perdidas: "$perdidas"                                 
+                    perdidas: "$perdidas",
+                    idRef: "$idRef",
+                    detalles: "$detalles"                                 
                 },
-            },            
+
+            },
+
             {
                 $sort: Orden
             }                                                                    
